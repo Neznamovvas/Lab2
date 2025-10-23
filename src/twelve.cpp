@@ -9,7 +9,7 @@ Twelve::Twelve()
 
 Twelve::Twelve(const size_t &n, unsigned char t)
 {
-    if((t < '0') || ((t > '9') && (t != 'A') && (t != 'B')))
+    if((t < '0') || ((t > '9') && (t != 'A') && (t != 'B')) || ((n > 1) && (t == '0')))
         throw std::exception();
     size = n;
     twelve_repr = new unsigned char[n];
@@ -19,6 +19,8 @@ Twelve::Twelve(const size_t &n, unsigned char t)
 
 Twelve::Twelve(const std::initializer_list<unsigned char> &t)
 {
+    if((t.size() > 1) && (*(t.begin()) == '0'))
+        throw std::exception();
     size = t.size();
     size_t i = size - 1;
     twelve_repr = new unsigned char[size];
@@ -33,6 +35,8 @@ Twelve::Twelve(const std::initializer_list<unsigned char> &t)
 
 Twelve::Twelve(const std::string n)
 {
+    if((n.length() > 1) && (n[0] == '0'))
+        throw std::exception();
     size = n.length();
     twelve_repr = new unsigned char[size];
     for(size_t i = 0; i < size; ++i)
@@ -169,7 +173,7 @@ Twelve Twelve::add(Twelve &other)
 
 Twelve Twelve::sub(Twelve &other) 
 {
-    if (!this->gt(other))
+    if (!(this->gt(other)) && !(this->eq(other)))
         throw std::exception(); 
 
     size_t result_size = size, rvsize;
