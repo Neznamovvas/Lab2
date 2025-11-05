@@ -6,13 +6,13 @@
 #include <iostream>
 #include <exception>
 
-class Twelve 
-{
-
+class Twelve {
+    
     unsigned char* twelve_repr;
     size_t size;
 
-    public:
+public:
+
     Twelve();
     Twelve(const size_t &n, unsigned char t = 0);
     Twelve(const std::initializer_list<unsigned char> &t);
@@ -28,6 +28,7 @@ class Twelve
     void copy_from(Twelve &other);
     void move_from(Twelve &&other) noexcept;
     void print();
+
 };
 
 #endif

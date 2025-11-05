@@ -1,14 +1,12 @@
 #include "../include/twelve.h"
 
-Twelve::Twelve()
-{
+Twelve::Twelve() {
     size = 1;
     twelve_repr = new unsigned char[1];
     twelve_repr[0] = '0';
 }
 
-Twelve::Twelve(const size_t &n, unsigned char t)
-{
+Twelve::Twelve(const size_t &n, unsigned char t) {
     if((t < '0') || ((t > '9') && (t != 'A') && (t != 'B')) || ((n > 1) && (t == '0')))
         throw std::exception();
     size = n;
@@ -17,15 +15,13 @@ Twelve::Twelve(const size_t &n, unsigned char t)
         twelve_repr[i] = t;
 }
 
-Twelve::Twelve(const std::initializer_list<unsigned char> &t)
-{
+Twelve::Twelve(const std::initializer_list<unsigned char> &t) {
     if((t.size() > 1) && (*(t.begin()) == '0'))
         throw std::exception();
     size = t.size();
     size_t i = size - 1;
     twelve_repr = new unsigned char[size];
-    for(auto num: t)
-    {
+    for(auto num: t) {
         if((num < '0') || ((num > '9') && (num != 'A') && (num != 'B')))
             throw std::exception();
         twelve_repr[i] = num;
@@ -33,38 +29,33 @@ Twelve::Twelve(const std::initializer_list<unsigned char> &t)
     }
 }
 
-Twelve::Twelve(const std::string n)
-{
+Twelve::Twelve(const std::string n) {
     if((n.length() > 1) && (n[0] == '0'))
         throw std::exception();
     size = n.length();
     twelve_repr = new unsigned char[size];
-    for(size_t i = 0; i < size; ++i)
-    {
+    for(size_t i = 0; i < size; ++i) {
         if((n[i] < '0') || ((n[i] > '9') && (n[i] != 'A') && (n[i] != 'B')))
             throw std::exception();
         twelve_repr[size - i - 1] = n[i];
     }
 }
 
-Twelve::Twelve(const Twelve &other)
-{
+Twelve::Twelve(const Twelve &other) {
     size = other.size;
     twelve_repr = new unsigned char[size];
     for(size_t i = 0; i < size; ++i)
         twelve_repr[i] = other.twelve_repr[i];
 }
 
-Twelve::Twelve(Twelve &&other) noexcept
-{
+Twelve::Twelve(Twelve &&other) noexcept {
     size = other.size;
     twelve_repr = other.twelve_repr;
     other.size = 0;
     other.twelve_repr = nullptr;
 }
 
-bool Twelve::eq(Twelve &other)
-{
+bool Twelve::eq(Twelve &other) {
     if(size != other.size) return false;
     for(size_t i = 0; i < size; ++i)
         if(twelve_repr[i] != other.twelve_repr[i])
@@ -72,8 +63,7 @@ bool Twelve::eq(Twelve &other)
     return true;
 }
 
-bool Twelve::gt(Twelve &other)
-{
+bool Twelve::gt(Twelve &other) {
     if(size > other.size) return true;
     if(size < other.size) return false;
     for(size_t i = size - 1; i >= 0; --i)
@@ -86,8 +76,7 @@ bool Twelve::gt(Twelve &other)
     return false;
 }
 
-bool Twelve::lt(Twelve &other)
-{
+bool Twelve::lt(Twelve &other) {
     if(size > other.size) return false;
     if(size < other.size) return true;
     for(size_t i = size - 1; i >= 0; --i)
@@ -100,14 +89,12 @@ bool Twelve::lt(Twelve &other)
     return false;
 }
 
-Twelve Twelve::add(Twelve &other)
-{
+Twelve Twelve::add(Twelve &other) {
     size_t result_size = std::max(size, other.size), rvsize;
     unsigned char* res = new unsigned char[result_size + 1];
     unsigned char *lvalue, *rvalue;
 
-    if(size < other.size)
-    {
+    if(size < other.size) {
         lvalue = new unsigned char[other.size];
         for(size_t i = 0; i < other.size; ++i)
             lvalue[i] = other.twelve_repr[i];
@@ -116,8 +103,7 @@ Twelve Twelve::add(Twelve &other)
             rvalue[i] = twelve_repr[i];
         rvsize = size;
     }
-    else
-    {
+    else {
         rvalue = new unsigned char[other.size];
         for(size_t i = 0; i < other.size; ++i)
             rvalue[i] = other.twelve_repr[i];
@@ -128,22 +114,19 @@ Twelve Twelve::add(Twelve &other)
     }
 
     unsigned char rem = 0;
-    for(size_t i = 0; i < result_size; ++i)
-    {
+    for(size_t i = 0; i < result_size; ++i) {
         if((lvalue[i] == 'A') || (lvalue[i] == 'B'))
             lvalue[i] = lvalue[i] - '0' - 7;
         else lvalue[i] = lvalue[i] - '0';
         if((i < rvsize) && ((rvalue[i] == 'A') || (rvalue[i] == 'B')))
             rvalue[i] = rvalue[i] - '0' - 7;
         else rvalue[i] = rvalue[i] - '0';
-        if(i < rvsize)
-        {
+        if(i < rvsize) {
             unsigned char sum = lvalue[i] + rvalue[i] + rem;
             res[i] = sum % 12;
             rem = sum / 12;
         }
-        else
-        {
+        else {
             unsigned char sum = lvalue[i] + rem;
             res[i] = sum % 12;
             rem = sum / 12;
@@ -156,8 +139,7 @@ Twelve Twelve::add(Twelve &other)
     std::string ans = "";
     if(res[result_size] == 1)
         ans += '1';
-    for(int i = result_size - 1; i >= 0; --i)
-    {
+    for(int i = result_size - 1; i >= 0; --i) {
         if(res[i] >= 10)
             ans += (res[i] + '0' + 7);
         else
@@ -171,8 +153,7 @@ Twelve Twelve::add(Twelve &other)
     return result;   
 }
 
-Twelve Twelve::sub(Twelve &other) 
-{
+Twelve Twelve::sub(Twelve &other) {
     if (!(this->gt(other)) && !(this->eq(other)))
         throw std::exception(); 
 
@@ -188,8 +169,7 @@ Twelve Twelve::sub(Twelve &other)
         lvalue[i] = twelve_repr[i];
 
 
-    for(size_t i = 0; i < result_size; ++i)
-    {
+    for(size_t i = 0; i < result_size; ++i) {
         if((lvalue[i] == 'A') || (lvalue[i] == 'B'))
             lvalue[i] = lvalue[i] - '0' - 7;
         else lvalue[i] = lvalue[i] - '0';
@@ -201,13 +181,11 @@ Twelve Twelve::sub(Twelve &other)
     }
 
     unsigned char borrow = 0;
-    for(size_t i = 0; i < result_size; ++i)
-    {
+    for(size_t i = 0; i < result_size; ++i) {
         int left_val = lvalue[i];
         int right_val = (i < rvsize) ? rvalue[i] : 0;
         int diff = left_val - right_val - borrow;
-        if (diff < 0)
-        {
+        if (diff < 0) {
             diff += 12;
             borrow = 1;
         } 
@@ -221,8 +199,7 @@ Twelve Twelve::sub(Twelve &other)
         first_non_zero--;
 
     std::string ans = "";
-    for(int i = first_non_zero; i >= 0; --i)
-    {
+    for(int i = first_non_zero; i >= 0; --i) {
         if(res[i] >= 10)
             ans += (res[i] + '0' + 7);
         else
@@ -236,8 +213,7 @@ Twelve Twelve::sub(Twelve &other)
     return result;   
 }
 
-void Twelve::copy_from(Twelve &other)
-{
+void Twelve::copy_from(Twelve &other) {
     if (this == &other) return;
     delete[] twelve_repr;
     size = other.size;
@@ -247,8 +223,7 @@ void Twelve::copy_from(Twelve &other)
     }
 }
 
-void Twelve::move_from(Twelve &&other) noexcept
-{
+void Twelve::move_from(Twelve &&other) noexcept {
     if (this == &other) return;
     delete[] twelve_repr;
     size = other.size;
@@ -257,15 +232,13 @@ void Twelve::move_from(Twelve &&other) noexcept
     other.twelve_repr = nullptr;
 }
 
-void Twelve::print()
-{
+void Twelve::print() {
     for(int i = size - 1; i >= 0; --i)
         std::cout << twelve_repr[i];
     std::cout << std::endl;
 }
 
-Twelve::~Twelve() noexcept
-{ 
+Twelve::~Twelve() noexcept { 
     delete[] twelve_repr;
 }
 

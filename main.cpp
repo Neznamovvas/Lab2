@@ -1,8 +1,8 @@
 #include "./include/twelve.h"
 #include <utility>
 
-int main()
-{
+int main() {
+
     std::string num1, num2, sign;
     std::cout << "Input first number (12 notation): ";
     std::cin >> num1;
@@ -20,4 +20,5 @@ int main()
     else throw std::exception();
     c.print();
     return 0;
+    
 }
